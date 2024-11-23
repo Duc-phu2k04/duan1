@@ -17,6 +17,14 @@ function pdo_get_connection() {
         throw new Exception("Kết nối thất bại: " . $e->getMessage());
     }
 }
+// File pdo.php
+function pdo_execute_return_lastInsertId($sql)
+{
+    global $pdo; // Kết nối PDO đã được khởi tạo ở nơi khác trong mã nguồn
+    $stmt = $pdo->prepare($sql); // Chuẩn bị câu lệnh SQL
+    $stmt->execute(); // Thực thi câu lệnh SQL
+    return $pdo->lastInsertId(); // Trả về ID của bản ghi vừa được chèn vào
+}
 
 /**
  * Thực thi câu lệnh sql thao tác dữ liệu (INSERT, UPDATE, DELETE)

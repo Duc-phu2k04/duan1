@@ -60,7 +60,7 @@ session_start();
                     <?php if ($_SESSION['user']['vaitro'] == '1'): ?>
                         <!-- Nếu người dùng là admin, hiển thị nút Admin -->
                         <li class="nav-item">
-                            <a class="nav-link" href="admin.php">Admin</a>
+                            <a class="nav-link" href="../admin/index.php">Admin</a>
                         </li>
                     <?php endif; ?>
                     
