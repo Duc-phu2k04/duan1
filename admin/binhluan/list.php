@@ -1,64 +1,76 @@
-<!-- admin/binhluan/list.php -->
+<?php
 
-<div class="row">
-    <form action="index.php?act=dskh" method="post">
-        <div class="row formtitle">
-            <h1>DANH SÁCH BÌNH LUẬN</h1>
-        </div>
-        
-        <div class="row formcontent">
-            <div class="row mb10 formdsloai">
-                <table>
-                    <tr>
-                        <th></th>
-                        <th>ID</th>
-                        <th>Id User</th>
-                        <th>ID Name</th>
-                        <th>Id Pro</th>
-                        <th>Nội Dung</th>
-                        <th>Ngày Bình luận</th>
-                        <th>Action</th>
+include "../../model/pdo.php";
+include "../../model/binhluan.php";
+
+$id_sp = $_REQUEST['id_sp'];
+$listbinhluan = loadall_binhluan($id_sp);
+
+if(isset($_GET['id']) && ($_GET['id'] > 0)) {
+    delete_binhluan($id_sp,$_GET['id']);
+}
+
+?>
+
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h4 class="m-0 font-weight-bold text-primary">Bình luận</h4>
+    </div>
+    <div class="card-body">
+
+        <div class="table-responsive">
+            <br>
+            <table id="dataTable" width="100%"  cellspacing="0" >
+                
+                    <tr >
+                        <th>STT</th>
+                        <th>Tên khách hàng</th>
+                        <th>Nội dung</th>
+                        <th>Ngày bình luận</th>
+                        <th>Hành động</th>
+
                     </tr>
+                
+
                     <?php
-                      try {
-                        // Database connection (PDO example)
-                        $pdo = new PDO("mysql:host=localhost;dbname=nhom2", "root", "");
-                        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-                        
-                        // Query to fetch comments
-                        $sql = "SELECT * FROM binhluan";  // Modify according to your database schema
-                        $stmt = $pdo->query($sql);
-                        
-                        // Fetch the data
-                        $listbinhluan = $stmt->fetchAll(PDO::FETCH_ASSOC);
-                    } catch (PDOException $e) {
-                        echo "Error: " . $e->getMessage();
-                    }
-                    // Hiển thị danh sách bình luận
-                    if (is_array($listbinhluan) && !empty($listbinhluan)) {
-                        foreach ($listbinhluan as $binhluan) {
-                            extract($binhluan);
-                            $xoabl = "index.php?act=xoabl&id=" . $id;  // Đường dẫn xóa bình luận
-                            echo '
-                            <tr>
-                                <td><input type="checkbox" name="delete[]" value="' . $id . '" id=""></td>
-                                <td>' . $id . '</td>
-                               <td>' . $user_id . '</td>
-                                <td>' . $user_name . '</td>
-                                <td>' . $product_id . '</td>
-                                <td>' . $noidung . '</td>
-                                <td>' . $trangthai . '</td>
-                                <td>
-                                      <a href="' . $xoabl . '"><button type="button">Xóa</button></a>
-                                </td>
-                            </tr>';
-                        }
-                    } else {
-                        echo "<tr><td colspan='8'>Không có bình luận nào.</td></tr>";
-                    }
-                    ?>
-                </table>
-            </div>
+                    foreach($listbinhluan as $key => $binhluan):
+                        extract($binhluan);
+                        $xoabl = "listbl.php?id_sp=$id_sp&id=".$id;
+                        ?>
+
+                        <tr class="text-center" style="text-align: center;">
+                            <td class="text-center" style=" padding-top: 30px;">
+                                <?= $key + 1 ?>
+                            </td>
+                            <td class="text-center" style=" padding-top: 30px;">
+                                <?= $nguoidung ?>
+                            </td>
+                            <td class="text-center" style=" padding-top: 30px;">
+                                <?= $noidung ?>
+                            </td>
+                            <td class="text-center" style=" padding-top: 30px;">
+                                <?= $ngaybinhluan ?>
+                            </td>
+                            <td class="text-center" style=" padding-top: 30px;">
+                                <a href="<?= $xoabl ?>" onclick="return confirmDeletebl()"><input type="button"
+                                        class="form-control btn btn-danger mt-2" style="background-color: red; color: white; width: 130px; height: 40px; border-radius: 5px" value="Xóa"></a>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+            </table>
         </div>
-    </form>
+    </div>
+</div>
+
+<script>
+    function confirmDeletebl() {
+        if (confirm("Bạn có muốn xóa bình luận này không")) {
+            document.location = "index.php?act=listbl";
+        } else {
+            return false;
+        }
+    }
+</script>
+
+
 </div>
