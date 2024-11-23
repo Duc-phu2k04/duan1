@@ -31,30 +31,31 @@ function loadall_binhluan_admin()
 }
 
 
-function loadall_binhluan($id_sp)
-{
-    
-    $sql = "
-            SELECT binhluan.id, binhluan.noidung, taikhoan.nguoidung, binhluan.id_nguoidung, binhluan.id_sp, binhluan.ngaybinhluan FROM `binhluan` 
-            LEFT JOIN taikhoan ON binhluan.id_nguoidung = taikhoan.id
-            LEFT JOIN sanpham ON binhluan.id_sp = sanpham.id
-            WHERE id_sp = $id_sp; 
-        ";
-    $listbinhluan = pdo_query($sql);
-    return $listbinhluan;
-}
-// function loadone_binhluan($id)
-// {
+function loadall_binhluan($id_sp) {
+    // Kiểm tra biến $id_sp có giá trị không, nếu không thì trả về mảng rỗng
+    if (empty($id_sp)) {
+        return [];
+    }
 
-//     $sql = "
-//     SELECT binhluan.id, binhluan.noidung, taikhoan.nguoidung,  binhluan.ngaybinhluan FROM `binhluan` 
-//      JOIN taikhoan ON binhluan.id_nguoidung = taikhoan.id
-//      JOIN sanpham ON binhluan.id_sp = sanpham.id
-//     WHERE sanpham.id = $id;
-// ";
-//     $binh_luan = pdo_query($sql);
-//     return $binh_luan;
-// }
+    // Truy vấn lấy bình luận từ database
+    $sql = "SELECT binhluan.*, nguoidung.ten AS nguoidung FROM binhluan 
+            JOIN nguoidung ON binhluan.id_nguoidung = nguoidung.id 
+            WHERE binhluan.id_sp = ?";
+    return pdo_query($sql, $id_sp);
+}
+
+function loadone_binhluan($id)
+{
+
+    $sql = "
+    SELECT binhluan.id, binhluan.noidung, taikhoan.nguoidung,  binhluan.ngaybinhluan FROM `binhluan` 
+     JOIN taikhoan ON binhluan.id_nguoidung = taikhoan.id
+     JOIN sanpham ON binhluan.id_sp = sanpham.id
+    WHERE sanpham.id = $id;
+";
+    $binh_luan = pdo_query($sql);
+    return $binh_luan;
+}
 
 
 ?>
